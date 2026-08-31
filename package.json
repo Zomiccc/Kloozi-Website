@@ -1,0 +1,29 @@
+{
+  "name": "zomic-marketing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zomic marketing website — sells the CRM before signup.",
+  "type": "module",
+  "dependencies": {
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^0.294.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "vite": "^5.0.10"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true
+  }
+}
