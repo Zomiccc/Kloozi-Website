@@ -152,7 +152,7 @@ export default function Navbar() {
     <header className={`nav-wrap ${scrolled ? 'nav-scrolled' : ''}`}>
       <nav className="nav shell" aria-label="Primary">
         <Link to="/" className="nav-brand" onClick={() => setOpenMega(null)}>
-          <span className="nav-brand-mark"><Mascot size={32} mood="idle" seed={5} /></span>
+          <span className="nav-brand-mark"><span className="zomic-brand-symbol" aria-hidden="true">z</span></span>
           <span className="nav-brand-name">Zomic</span>
         </Link>
 
@@ -220,7 +220,7 @@ export default function Navbar() {
             >
               <div className="drawer-head">
                 <Link to="/" className="nav-brand" onClick={() => setDrawer(false)}>
-                  <span className="nav-brand-mark"><Mascot size={30} mood="idle" seed={6} /></span>
+                  <span className="nav-brand-mark"><span className="zomic-brand-symbol" aria-hidden="true">z</span></span>
                   <span className="nav-brand-name">Zomic</span>
                 </Link>
                 <button className="drawer-close" onClick={() => setDrawer(false)} aria-label="Close menu">

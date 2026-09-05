@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
 import { FOOTER_COLUMNS, LEGAL_LINKS } from '../lib/content.js';
-import Mascot from './Mascot.jsx';
+
 
 export default function Footer() {
   return (
@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <Link to="/" className="flex items-center gap-2">
-              <Mascot size={36} mood="idle" seed={9} />
+              <span className="zomic-brand-symbol" aria-hidden="true">z</span>
               <span className="footer-brand-name">Zomic</span>
             </Link>
             <p className="footer-tag">

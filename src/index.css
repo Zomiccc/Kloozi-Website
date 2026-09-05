@@ -762,3 +762,9 @@ section { position: relative; }
   .blob, .scroll-progress { display: none !important; }
   .marquee-track { animation: none !important; transform: none !important; }
 }
+
+/* Shared Zomic identity: paper, charcoal, vermilion. */
+:root{--canvas:#f7f6f2;--canvas-alt:#eeefe7;--canvas-deep:#e5e9dc;--surface:#fff;--ink:#282c25;--ink-2:#69715f;--ink-3:#818975;--ink-4:#aeb6a1;--hairline:#dfe2d7;--hairline-strong:#cbd1c0;--accent-soft:#f7e1d6;--accent:#efad92;--accent-mid:#e88059;--accent-deep:#c64623;--accent-deepest:#903418;--sh-sm:0 2px 8px #333b2608;--sh-md:0 8px 24px #333b2610;--sh-lg:0 20px 44px #333b2617;--sh-xl:0 32px 72px #333b261c;--sh-glow:0 10px 36px #d65a2824;--sh-focus:0 0 0 4px #ee532b30}
+.nav-wrap{background:rgba(247,246,242,.95);border-bottom:1px solid #dedfd7;backdrop-filter:blur(16px)}
+.nav-scrolled{background:rgba(247,246,242,.97)}
+.nav{height:80px}.nav-brand-name{font-size:29px;letter-spacing:-1.5px}.nav-brand-mark{display:grid;place-items:center;width:30px;height:35px}.zomic-brand-symbol{font-family:Arial,sans-serif;font-size:42px;font-style:italic;line-height:1;font-weight:900;color:#ee532b}.nav-trigger,.nav-underline{font-size:12px}.nav .btn{border-radius:5px;font-size:11px}.nav .btn-accent{background:#2e382d;box-shadow:none;color:#fff}.nav .btn-accent:hover{background:#44543b}.btn{border-radius:6px}.footer{background:#293128}.footer:before{background:none}.footer-brand-name{letter-spacing:-1px}.footer-social a{border-radius:5px}.footer-top{padding-top:55px;padding-bottom:40px}.footer-tag,.footer-link{font-size:12px}.footer-col-title{font-size:9px}.scroll-progress{background:#ee532b}.blob{opacity:.18}button:focus-visible,a:focus-visible{outline:2px solid #bd4828;outline-offset:5px}
