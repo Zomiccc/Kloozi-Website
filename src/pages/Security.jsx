@@ -1,79 +1,43 @@
-// Zomic marketing — Security / trust page.
-import { ShieldCheck, Lock, Server, KeyRound, FileCheck, Eye, RefreshCw, Mail } from 'lucide-react';
-import { PageHero, SectionHeading, CTASection } from '../components/sections.jsx';
-import { Reveal, RevealItem } from '../lib/motion.jsx';
+// Flazyn — Trust & Security. States principles and practices only;
+// no certifications are claimed.
+import { Lock, KeyRound, Database, Trash2, EyeOff, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { PageHero, SectionHead, FeatureGrid, CTA } from '../components/sections.jsx';
+import { SITE } from '../lib/site.js';
 
-const PILLARS = [
-  { icon: Lock, title: 'Encryption in transit & at rest', body: 'All data is encrypted with TLS 1.2+ in transit and AES-256 at rest. Your leads’ conversations are never readable in plain text on our servers.' },
-  { icon: KeyRound, title: 'Least-privilege access', body: 'Every employee access grant is role-scoped, time-boxed, and audited. No standing access to customer data.' },
-  { icon: Server, title: 'Hosted on hardened cloud', body: 'Zomic runs on isolated cloud infrastructure with network segmentation, regular patching, and continuous vulnerability scanning.' },
-  { icon: FileCheck, title: 'Backups & disaster recovery', body: 'Encrypted daily backups with point-in-time recovery, tested restore drills, and a documented incident response plan.' },
-  { icon: Eye, title: 'Audit logs', body: 'Every action on a lead, pipeline, or setting is logged. Enterprise customers get exportable audit trails.' },
-  { icon: RefreshCw, title: 'Continuous compliance', body: 'We run ongoing security reviews, third-party penetration tests, and keep our SOC 2 controls continuously enforced.' },
-];
-
-const COMPLIANCE = [
-  { label: 'SOC 2 Type II', status: 'In progress' },
-  { label: 'GDPR', status: 'Compliant' },
-  { label: 'CCPA', status: 'Compliant' },
-  { label: 'WhatsApp Business Policy', status: 'Compliant' },
-  { label: 'Data residency (EU)', status: 'Available on Scale' },
+const PRACTICES = [
+  { icon: Lock, title: 'Encryption in transit', body: 'All traffic to Flazyn is served over HTTPS/TLS.' },
+  { icon: KeyRound, hue: 'sun', title: 'Access control', body: 'Role-based permissions inside each workspace, and access to production systems limited to the people who need it.' },
+  { icon: Database, hue: 'sky', title: 'Data minimisation', body: 'We collect only the data needed to run the service, and never sell personal data.' },
+  { icon: MessageCircle, hue: 'mint', title: 'WhatsApp data', body: 'Messages exchanged through the WhatsApp Business Platform are used only to provide the service to the business that owns the conversation.' },
+  { icon: EyeOff, hue: 'orchid', title: 'No advertising use', body: 'Customer data and conversations are never used for advertising.' },
+  { icon: Trash2, hue: 'coral', title: 'Deletion on request', body: 'You can ask us to delete your data at any time.' },
 ];
 
 export default function Security() {
   return (
     <>
       <PageHero
-        eyebrow="Security"
-        title="Your leads’ conversations are sacred. We treat them that way."
-        lead="Trust is the whole product. Here is exactly how we keep your data — and your customers’ data — safe."
-        mascotMood="wave"
+        center
+        eyebrow="Trust & Security"
+        title="Your customers’ trust is our product."
+        lead="Flazyn handles your leads and conversations, so protecting that data is part of the job — not an afterthought."
       />
-
-      <section className="section">
+      <section className="section" style={{ paddingTop: 24 }}>
         <div className="shell">
-          <SectionHeading eyebrow="How we protect your data" title="Six pillars, no hand-waving." />
-          <Reveal stagger={0.08} className="card-grid card-grid-3 mt-12">
-            {PILLARS.map((p) => (
-              <RevealItem key={p.title}>
-                <div className="feature-card card-hover">
-                  <span className="feature-card-ico"><p.icon size={22} /></span>
-                  <div className="feature-card-title">{p.title}</div>
-                  <div className="feature-card-body">{p.body}</div>
-                </div>
-              </RevealItem>
-            ))}
-          </Reveal>
+          <FeatureGrid items={PRACTICES} />
         </div>
       </section>
-
-      <section className="section" style={{ background: 'var(--canvas-alt)' }}>
+      <section className="section section-alt">
         <div className="shell">
-          <SectionHeading eyebrow="Compliance" title="Where we stand." />
-          <Reveal stagger={0.06} className="mt-10 max-w-2xl mx-auto flex flex-col gap-3">
-            {COMPLIANCE.map((c) => (
-              <RevealItem key={c.label}>
-                <div className="card row-card">
-                  <span className="hero-mock-avatar" style={{ background: 'var(--mint)', color: '#1f6b43' }}><ShieldCheck size={18} /></span>
-                  <div className="flex-1"><div className="hero-mock-name">{c.label}</div></div>
-                  <span className="badge badge-accent">{c.status}</span>
-                </div>
-              </RevealItem>
-            ))}
-          </Reveal>
+          <SectionHead
+            eyebrow="Questions?"
+            title="Talk to us about security."
+            lead={<>Email <a href={`mailto:${SITE.email}`} className="link-arrow">{SITE.email}</a> or read our <Link to="/legal/privacy" className="link-arrow">Privacy Policy</Link> and <Link to="/legal/data-deletion" className="link-arrow">data deletion instructions</Link>.</>}
+          />
         </div>
       </section>
-
-      <section className="section">
-        <div className="shell">
-          <SectionHeading eyebrow="Found a vulnerability?" title="We want to know." lead="Responsible disclosures are welcome and rewarded. Email security@zomic.com with details and we will respond within 48 hours." />
-          <Reveal variant="fade" className="text-center mt-8">
-            <a href="mailto:security@zomic.com" className="btn btn-accent btn-lg"><Mail size={18} /> security@zomic.com</a>
-          </Reveal>
-        </div>
-      </section>
-
-      <CTASection title="Security questions before you sign up?" primary={{ label: 'Talk to us', to: '/contact' }} secondary={null} />
+      <CTA />
     </>
   );
 }

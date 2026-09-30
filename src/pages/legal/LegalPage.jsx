@@ -1,28 +1,24 @@
-// Zomic marketing — shared legal page layout.
+// Flazyn — shared legal page layout. Sections are plain data:
+// { title, p: [paragraphs], list?: [items], after?: [paragraphs] }
 import { PageHero } from '../../components/sections.jsx';
-import { Reveal, RevealItem } from '../../lib/motion.jsx';
 
 export default function LegalPage({ title, updated, intro, sections }) {
   return (
     <>
-      <PageHero
-        eyebrow="Legal"
-        title={title}
-        lead={`Last updated: ${updated}`}
-        align="center"
-      />
-      <section className="section" style={{ paddingTop: 24 }}>
+      <PageHero center eyebrow="Legal" title={title} lead={`Effective date: ${updated}`} />
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="shell">
-          <Reveal stagger={0.06} className="blog-post blog-post-body">
-            <RevealItem as="p"><p>{intro}</p></RevealItem>
-            {sections.map((s, i) => (
-              <RevealItem key={i} as="div">
+          <div className="prose">
+            {intro.map((t, i) => <p key={i}>{t}</p>)}
+            {sections.map((s) => (
+              <section key={s.title}>
                 <h2>{s.title}</h2>
-                {s.paragraphs.map((p, j) => <p key={j}>{p}</p>)}
-                {s.list && <ul>{s.list.map((li, j) => <li key={j}>{li}</li>)}</ul>}
-              </RevealItem>
+                {s.p?.map((t, i) => <p key={i}>{t}</p>)}
+                {s.list && <ul>{s.list.map((li) => <li key={li}>{li}</li>)}</ul>}
+                {s.after?.map((t, i) => <p key={`a${i}`}>{t}</p>)}
+              </section>
             ))}
-          </Reveal>
+          </div>
         </div>
       </section>
     </>

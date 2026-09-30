@@ -1,138 +1,44 @@
-// Zomic marketing — top navigation with HubSpot-style mega-menus.
-// Part 1 + Part 3.5: dropdown panels slide down + fade in (180ms), with
-// menu items staggering in 40ms each. Mobile collapses into a drawer
-// with accordions (Part 5).
-
-import { useEffect, useState } from 'react';
+// Flazyn — top navigation. Desktop: hover/click mega-menus.
+// Mobile (<1080px): slide-in drawer. Menus close on route change,
+// Escape and outside click.
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import {
-  ChevronDown, Menu, X, ArrowRight, Sparkles,
-} from 'lucide-react';
-import {
-  PRODUCT_GROUPS, PRODUCT_FEATURED, SOLUTIONS, RESOURCES, COMPANY,
-} from '../lib/content.js';
-import { iconFor } from '../lib/icons.js';
-import { EASE_SOFT } from '../lib/motion.jsx';
-import Mascot from './Mascot.jsx';
+import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+import Logo from './Logo.jsx';
+import { PRODUCT_LINKS, SOLUTION_LINKS, COMPANY_LINKS } from '../lib/site.js';
+import { iconFor, hueFor } from '../lib/icons.js';
+import { EASE } from '../lib/motion.jsx';
 
-/* ─── Mega-menu panel (desktop) ─── */
-function MegaPanel({ kind, onClose }) {
-  const reduce = useReducedMotion();
-  const container = reduce
-    ? {}
-    : { initial: { opacity: 0, y: -8 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 }, transition: { duration: 0.18, ease: EASE_SOFT } };
-  const item = reduce
-    ? {}
-    : { initial: { opacity: 0, y: 6 }, animate: { opacity: 1, y: 0 } };
+const MENUS = [
+  { key: 'product', label: 'Product', links: PRODUCT_LINKS },
+  { key: 'solutions', label: 'Solutions', links: SOLUTION_LINKS },
+  { key: 'company', label: 'Company', links: COMPANY_LINKS },
+];
 
-  if (kind === 'product') {
-    return (
-      <motion.div {...container} className="mega-panel">
-        <div className="mega-grid">
-          {PRODUCT_GROUPS.map((g) => (
-            <div key={g.title} className="mega-col">
-              <p className="mega-col-title">{g.title}</p>
-              <div className="mega-col-items">
-                {g.items.map((it, i) => {
-                  const Icon = iconFor(it.icon);
-                  return (
-                    <motion.div key={it.to} {...item} transition={{ delay: 0.04 * i, duration: 0.18, ease: EASE_SOFT }}>
-                      <Link to={it.to} className="mega-link" onClick={onClose}>
-                        <span className="mega-ico"><Icon size={18} /></span>
-                        <span>
-                          <span className="mega-link-title">{it.label}</span>
-                          <span className="mega-link-desc">{it.desc}</span>
-                        </span>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-          {/* Column 4 — featured callout */}
-          <motion.div {...item} transition={{ delay: 0.12, duration: 0.18, ease: EASE_SOFT }} className="mega-col mega-featured">
-            <span className="badge badge-accent">{PRODUCT_FEATURED.badge}</span>
-            <p className="mega-featured-title">{PRODUCT_FEATURED.title}</p>
-            <p className="mega-featured-desc">{PRODUCT_FEATURED.desc}</p>
-            <Link to={PRODUCT_FEATURED.to} className="mega-featured-cta" onClick={onClose}>
-              {PRODUCT_FEATURED.cta} <ArrowRight size={15} />
-            </Link>
-            {/* seed=7 desyncs this mascot's idle loops from the hero one */}
-            <div className="mega-featured-art"><Mascot size={92} mood="peek" seed={7} /></div>
-          </motion.div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Solutions / Resources / Company share a single-column list layout.
-  const list = kind === 'solutions' ? SOLUTIONS : kind === 'resources' ? RESOURCES : COMPANY;
+function MenuLink({ item, onClick }) {
+  const Icon = iconFor(item.icon);
   return (
-    <motion.div {...container} className="mega-panel mega-panel-sm">
-      <div className="mega-sm-grid">
-        {list.map((it, i) => {
-          const Icon = iconFor(it.icon);
-          return (
-            <motion.div key={it.to + it.label} {...item} transition={{ delay: 0.04 * i, duration: 0.18, ease: EASE_SOFT }}>
-              <Link to={it.to} className="mega-link" onClick={onClose}>
-                <span className="mega-ico"><Icon size={18} /></span>
-                <span>
-                  <span className="mega-link-title">{it.label}</span>
-                  <span className="mega-link-desc">{it.desc}</span>
-                </span>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── Mobile drawer accordion section ─── */
-function DrawerSection({ title, links, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div className="drawer-section">
-      <button className="drawer-section-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span>{title}</span>
-        <ChevronDown size={18} className={open ? 'drawer-chev-open' : ''} />
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: EASE_SOFT }}
-            className="drawer-section-body"
-          >
-            {links.map((l) => (
-              <Link key={l.to + l.label} to={l.to} className="drawer-link">{l.label}</Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <Link to={item.to} className="mega-link" onClick={onClick}>
+      <span className={`chip3d sm ${hueFor(item.icon)}`}><Icon size={18} /></span>
+      <span><span className="mega-title">{item.label}</span><span className="mega-desc">{item.desc}</span></span>
+    </Link>
   );
 }
 
 export default function Navbar() {
-  const [openMega, setOpenMega] = useState(null); // 'product' | 'solutions' | ...
-  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(null);
   const [drawer, setDrawer] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const loc = useLocation();
+  const reduce = useReducedMotion();
+  const navRef = useRef(null);
+  const [mounted, setMounted] = useState(false);
 
-  // Close mega-menu + drawer on route change.
-  useEffect(() => { setOpenMega(null); setDrawer(false); }, [loc.pathname]);
-  // Lock body scroll when mobile drawer is open.
-  useEffect(() => {
-    document.body.style.overflow = drawer ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [drawer]);
-  // Shadow on scroll.
+  useEffect(() => setMounted(true), []);
+  useEffect(() => { setOpen(null); setDrawer(false); }, [loc.pathname]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -140,112 +46,106 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navItems = [
-    { key: 'product', label: 'Product', mega: true },
-    { key: 'solutions', label: 'Solutions', mega: true },
-    { key: 'pricing', label: 'Pricing', to: '/pricing', mega: false },
-    { key: 'resources', label: 'Resources', mega: true },
-    { key: 'company', label: 'Company', mega: true },
-  ];
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') { setOpen(null); setDrawer(false); } };
+    const onDown = (e) => { if (navRef.current && !navRef.current.contains(e.target)) setOpen(null); };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onDown); };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = drawer ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [drawer]);
+
+  const panel = reduce ? {} : { initial: { opacity: 0, rotateX: -18, y: -4, transformPerspective: 900 }, animate: { opacity: 1, rotateX: 0, y: 0 }, exit: { opacity: 0, rotateX: -12, y: -4 }, transition: { duration: 0.28, ease: EASE }, style: { transformOrigin: '50% 0' } };
 
   return (
-    <header className={`nav-wrap ${scrolled ? 'nav-scrolled' : ''}`}>
-      <nav className="nav shell" aria-label="Primary">
-        <Link to="/" className="nav-brand" onClick={() => setOpenMega(null)}>
-          <span className="nav-brand-mark"><span className="zomic-brand-symbol" aria-hidden="true">z</span></span>
-          <span className="nav-brand-name">Zomic</span>
-        </Link>
+    <header className={`nav-wrap ${scrolled || drawer ? 'scrolled' : ''}`}>
+      <nav className="nav shell" aria-label="Main" ref={navRef}>
+        <Link to="/" aria-label="Flazyn home"><Logo /></Link>
 
-        {/* desktop links */}
-        <div className="nav-links" onMouseLeave={() => setOpenMega(null)}>
-          {navItems.map((n) =>
-            n.mega ? (
-              <div
-                key={n.key}
-                className="nav-item"
-                onMouseEnter={() => setOpenMega(n.key)}
+        <div className="nav-links" onMouseLeave={() => setOpen(null)}>
+          {MENUS.map((m) => (
+            <div key={m.key} className="nav-item" onMouseEnter={() => setOpen(m.key)}>
+              <button
+                type="button"
+                className="nav-trigger"
+                aria-expanded={open === m.key}
+                aria-controls={`menu-${m.key}`}
+                onClick={() => setOpen((o) => (o === m.key ? null : m.key))}
               >
-                <button
-                  className={`nav-trigger ${openMega === n.key ? 'nav-trigger-open' : ''}`}
-                  aria-expanded={openMega === n.key}
-                  onClick={() => setOpenMega((o) => (o === n.key ? null : n.key))}
-                >
-                  {n.label}
-                  <ChevronDown size={15} className={`nav-chev ${openMega === n.key ? 'nav-chev-open' : ''}`} />
-                </button>
-              </div>
-            ) : (
-              <NavLink key={n.key} to={n.to} className="nav-underline">
-                {n.label}
-              </NavLink>
-            )
-          )}
+                {m.label} <ChevronDown size={15} />
+              </button>
+              <AnimatePresence>
+                {open === m.key && (
+                  <motion.div id={`menu-${m.key}`} className={`mega ${m.links.length <= 4 && m.key !== 'product' ? 'single' : ''}`} {...panel}>
+                    {m.links.map((it) => <MenuLink key={it.to} item={it} onClick={() => setOpen(null)} />)}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+          <NavLink to="/blog" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Blog</NavLink>
         </div>
 
-        {/* desktop CTAs */}
         <div className="nav-cta">
-          <Link to="/contact" className="btn btn-ghost btn-sm">Book a demo</Link>
-          <Link to="/signup" className="btn btn-accent btn-sm">Start free trial</Link>
+          <Link to="/contact" className="btn btn-ghost btn-sm">Contact</Link>
+          <Link to="/early-access" className="btn btn-primary btn-sm">Get early access</Link>
         </div>
 
-        {/* mobile toggle */}
-        <button className="nav-burger" onClick={() => setDrawer(true)} aria-label="Open menu">
-          <Menu size={24} />
+        <button type="button" className="nav-burger" onClick={() => setDrawer(true)} aria-label="Open menu" aria-expanded={drawer}>
+          <Menu size={22} />
         </button>
       </nav>
 
-      {/* desktop mega-menu overlay */}
-      <AnimatePresence>
-        {openMega && (
-          <div className="mega-viewport" onMouseEnter={() => {}} onMouseLeave={() => setOpenMega(null)}>
-            <MegaPanel kind={openMega} onClose={() => setOpenMega(null)} />
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* mobile drawer */}
-      <AnimatePresence>
+      {/* Portal: the header's backdrop-filter would otherwise become the
+          containing block for these fixed-position elements. */}
+      {mounted && createPortal(<AnimatePresence>
         {drawer && (
           <>
-            <motion.div
-              className="drawer-scrim"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setDrawer(false)}
-            />
+            <motion.div className="drawer-scrim" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
             <motion.aside
               className="drawer"
-              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ duration: 0.28, ease: EASE_SOFT }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu"
+              initial={reduce ? false : { x: '100%' }}
+              animate={{ x: 0 }}
+              exit={reduce ? { opacity: 0 } : { x: '100%' }}
+              transition={{ duration: 0.3, ease: EASE }}
             >
               <div className="drawer-head">
-                <Link to="/" className="nav-brand" onClick={() => setDrawer(false)}>
-                  <span className="nav-brand-mark"><span className="zomic-brand-symbol" aria-hidden="true">z</span></span>
-                  <span className="nav-brand-name">Zomic</span>
-                </Link>
-                <button className="drawer-close" onClick={() => setDrawer(false)} aria-label="Close menu">
-                  <X size={22} />
-                </button>
+                <Link to="/" aria-label="Flazyn home"><Logo /></Link>
+                <button type="button" className="nav-burger" style={{ display: 'grid' }} onClick={() => setDrawer(false)} aria-label="Close menu"><X size={22} /></button>
               </div>
-
               <div className="drawer-body">
-                <DrawerSection title="Product" defaultOpen links={[
-                  ...PRODUCT_GROUPS.flatMap((g) => g.items.map((i) => ({ to: i.to, label: i.label }))),
-                ]} />
-                <DrawerSection title="Solutions" links={SOLUTIONS.map((s) => ({ to: s.to, label: s.label }))} />
-                <Link to="/pricing" className="drawer-link drawer-link-top">Pricing</Link>
-                <DrawerSection title="Resources" links={RESOURCES.map((r) => ({ to: r.to, label: r.label }))} />
-                <DrawerSection title="Company" links={COMPANY.map((c) => ({ to: c.to, label: c.label }))} />
+                {MENUS.map((m) => (
+                  <div key={m.key} className="drawer-group">
+                    <p className="drawer-group-title">{m.label}</p>
+                    {m.links.map((it) => {
+                      const Icon = iconFor(it.icon);
+                      return (
+                        <Link key={it.to} to={it.to} className="drawer-link">
+                          <span className={`chip3d sm ${hueFor(it.icon)}`}><Icon size={17} /></span>{it.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
+                <div className="drawer-group" style={{ borderBottom: 0 }}>
+                  <Link to="/blog" className="drawer-link">Blog <ArrowRight size={16} style={{ marginLeft: 'auto' }} /></Link>
+                </div>
               </div>
-
               <div className="drawer-foot">
-                <Link to="/signup" className="btn btn-accent w-full"><Sparkles size={16} /> Start free trial</Link>
-                <Link to="/contact" className="btn btn-secondary w-full">Book a demo</Link>
+                <Link to="/early-access" className="btn btn-primary btn-block">Get early access <ArrowRight size={17} /></Link>
+                <Link to="/contact" className="btn btn-secondary btn-block">Contact us</Link>
               </div>
             </motion.aside>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)}
     </header>
   );
 }

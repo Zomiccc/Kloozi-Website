@@ -1,15 +1,34 @@
-// Zomic marketing — shared layout: scroll progress + navbar + page + footer.
+// Flazyn — shared layout. The prerenderer writes each route's <head>;
+// this keeps <title>/description/canonical correct during client-side
+// navigation too.
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { MotionConfig } from 'framer-motion';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
+import UniverseHost from './UniverseHost.jsx';
+import TiltLayer from './TiltLayer.jsx';
 import { PageTransition, ScrollProgress } from '../lib/motion.jsx';
+import { metaFor, canonical } from '../lib/seo.js';
+
+function setMeta(selector, attr, value) {
+  const el = document.head.querySelector(selector);
+  if (el) el.setAttribute(attr, value);
+}
 
 export default function Layout({ children }) {
   const loc = useLocation();
 
-  // Scroll to top on route change (unless there's a hash anchor to reach).
+  useEffect(() => {
+    const m = metaFor(loc.pathname);
+    document.title = m.title;
+    setMeta('meta[name="description"]', 'content', m.description);
+    setMeta('link[rel="canonical"]', 'href', canonical(m.path));
+    setMeta('meta[property="og:title"]', 'content', m.title);
+    setMeta('meta[property="og:description"]', 'content', m.description);
+    setMeta('meta[property="og:url"]', 'content', canonical(m.path));
+  }, [loc.pathname]);
+
   useEffect(() => {
     if (loc.hash) {
       const el = document.getElementById(loc.hash.slice(1));
@@ -19,15 +38,16 @@ export default function Layout({ children }) {
   }, [loc.pathname, loc.hash]);
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
+      <a href="#main" className="skip-link">Skip to content</a>
+      <UniverseHost />
+      <TiltLayer />
       <ScrollProgress />
       <Navbar />
-      <AnimatePresence mode="wait">
-        <PageTransition key={loc.pathname}>
-          <main className="main">{children}</main>
-        </PageTransition>
-      </AnimatePresence>
+      <main id="main">
+        <PageTransition key={loc.pathname}>{children}</PageTransition>
+      </main>
       <Footer />
-    </>
+    </MotionConfig>
   );
 }

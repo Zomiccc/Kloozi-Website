@@ -15,7 +15,8 @@
 // independently: ears sway, body breathes, eyes blink, head tilts.
 // ═══════════════════════════════════════════════════════════════════
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useMotionPaused } from './ExperienceProvider.jsx';
 import { EASE_BOUNCY, EASE_SOFT } from '../lib/motion.jsx';
 
 /* Single-hue tonal ramp — this is what creates the "faded, no colours"
@@ -42,7 +43,7 @@ export default function Mascot({
      multiple mascots on one page never move in lockstep */
   seed = 0,
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useMotionPaused();
   const uid = `zo${size}${mood}${seed}`;
 
   /* stagger all loops by the seed so instances feel independent */

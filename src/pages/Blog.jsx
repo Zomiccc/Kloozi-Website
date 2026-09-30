@@ -1,69 +1,43 @@
-// Zomic marketing — Blog index.
+// Flazyn — Blog index.
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
-import { PageHero, SectionHeading, CTASection } from '../components/sections.jsx';
+import { PageHero } from '../components/sections.jsx';
 import { Reveal, RevealItem } from '../lib/motion.jsx';
 import { POSTS } from '../lib/posts.js';
 
+export function formatDate(iso) {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+}
+
+export function PostCard({ post, headingLevel = 'h2' }) {
+  const H = headingLevel;
+  return (
+    <Link to={`/blog/${post.slug}`} className="post-card">
+      <div className="post-art"><img src={post.image} alt={post.imageAlt} loading="lazy" decoding="async" /></div>
+      <div className="post-card-body">
+        <span className="badge">{post.tag}</span>
+        <H>{post.title}</H>
+        <p>{post.description}</p>
+        <div className="post-meta" style={{ marginTop: 'auto', paddingTop: 8 }}>
+          <span>{formatDate(post.date)}</span><span><Clock size={13} /> {post.readTime}</span>
+          <span className="link-arrow" style={{ marginLeft: 'auto', fontSize: 14 }}>Read <ArrowRight size={14} /></span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Blog() {
-  const [featured, ...rest] = POSTS;
   return (
     <>
-      <PageHero
-        eyebrow="Blog"
-        title="Playbooks on leads, automation, and growth."
-        lead="What we are learning building Zomic, and the tactics our customers use to close more conversations."
-        align="center"
-        mascotMood="wave"
-      />
-
-      {/* featured post */}
-      <section className="section" style={{ paddingTop: 24 }}>
+      <PageHero center eyebrow="Blog" title="Playbooks for conversational selling." lead="Practical guides on lead response, WhatsApp Business, pipelines and CRM habits that stick." />
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="shell">
-          <Reveal stagger={0.1} className="card card-hover overflow-hidden" style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 0 }}>
-            <RevealItem>
-              <div style={{ background: featured.color, minHeight: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-                <span style={{ fontSize: 48, fontWeight: 800, color: 'var(--ink)', opacity: 0.85 }}>{featured.tag}</span>
-              </div>
-            </RevealItem>
-            <RevealItem className="p-10 flex flex-col justify-center">
-              <span className="blog-card-tag">{featured.tag} · Featured</span>
-              <h2 className="blog-card-title mt-2" style={{ fontSize: 28 }}>{featured.title}</h2>
-              <p className="blog-card-excerpt mt-3">{featured.excerpt}</p>
-              <div className="flex items-center gap-3 mt-5" style={{ fontSize: 13, color: 'var(--ink-2)' }}>
-                <span>{featured.author}</span><span>·</span><span>{featured.date}</span><span>·</span><span className="flex items-center gap-1"><Clock size={13} /> {featured.readTime}</span>
-              </div>
-              <Link to={`/blog/${featured.slug}`} className="btn btn-secondary mt-6" style={{ alignSelf: 'flex-start' }}>Read article <ArrowRight size={16} /></Link>
-            </RevealItem>
+          <Reveal stagger={0.08} className="post-grid">
+            {POSTS.map((p) => <RevealItem key={p.slug} variant="pop"><PostCard post={p} /></RevealItem>)}
           </Reveal>
         </div>
       </section>
-
-      {/* rest of posts */}
-      <section className="section" style={{ background: 'var(--canvas-alt)' }}>
-        <div className="shell">
-          <SectionHeading eyebrow="Latest" title="More from the blog" />
-          <Reveal stagger={0.08} className="blog-grid">
-            {rest.map((p) => (
-              <RevealItem key={p.slug}>
-                <Link to={`/blog/${p.slug}`} className="card card-hover blog-card" style={{ textDecoration: 'none' }}>
-                  <div className="blog-card-art" style={{ background: p.color }}>
-                    <span style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', opacity: 0.85 }}>{p.tag}</span>
-                  </div>
-                  <span className="blog-card-tag">{p.tag}</span>
-                  <h3 className="blog-card-title">{p.title}</h3>
-                  <p className="blog-card-excerpt">{p.excerpt}</p>
-                  <div className="flex items-center gap-2 mt-auto" style={{ fontSize: 12, color: 'var(--ink-2)' }}>
-                    <span>{p.author}</span><span>·</span><span className="flex items-center gap-1"><Clock size={12} /> {p.readTime}</span>
-                  </div>
-                </Link>
-              </RevealItem>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      <CTASection title="Want these playbooks in your inbox?" lead="No spam, one useful email a week. Unsubscribe in one click." primary={{ label: 'Start free trial', to: '/signup' }} secondary={null} />
     </>
   );
 }

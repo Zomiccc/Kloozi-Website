@@ -1,19 +1,17 @@
-// Zomic marketing — curated icon map.
-// Only the icons referenced by name in lib/content.js are imported
-// here, so the bundler tree-shakes lucide-react instead of pulling
-// in every icon (saves ~600 kB).
+// Flazyn marketing — named icon map for data-driven menus (lib/site.js).
 import {
-  Users, MessageCircle, Mail, UsersRound, Megaphone, Globe, Plug,
-  Workflow, BarChart3, Flame, Sparkles, Home, TrendingUp, Building2,
-  Rocket, BookOpen, LifeBuoy, ShieldCheck, Code2, Info, Briefcase,
-  Newspaper, Circle,
+  Users, MessageCircle, Mail, Workflow, BarChart3, Home, TrendingUp,
+  Building2, Rocket, Info, BookOpen, ShieldCheck, Circle,
 } from 'lucide-react';
 
-export const ICONS = {
-  Users, MessageCircle, Mail, UsersRound, Megaphone, Globe, Plug,
-  Workflow, BarChart3, Flame, Sparkles, Home, TrendingUp, Building2,
-  Rocket, BookOpen, LifeBuoy, ShieldCheck, Code2, Info, Briefcase,
-  Newspaper,
-};
+const ICONS = { Users, MessageCircle, Mail, Workflow, BarChart3, Home, TrendingUp, Building2, Rocket, Info, BookOpen, ShieldCheck };
 
 export const iconFor = (name) => ICONS[name] || Circle;
+
+/* Each menu icon gets a consistent 3D chip colour. */
+const HUES = {
+  Users: '', MessageCircle: 'mint', Mail: 'coral', Workflow: 'orchid', BarChart3: 'sky',
+  Home: 'coral', TrendingUp: 'mint', Building2: 'sky', Rocket: 'sun',
+  Info: '', BookOpen: 'sun', ShieldCheck: 'mint',
+};
+export const hueFor = (name) => HUES[name] ?? '';

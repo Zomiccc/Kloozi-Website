@@ -1,18 +1,37 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#F4F1FF" />
-    <meta name="description" content="Zomic is the CRM that turns conversations into customers — lead management, WhatsApp automation, and a built-in email marketing system in one calm, fast workspace." />
+    <meta name="theme-color" content="#fbfaff" />
+    <script>
+      // 3D intro: cover the page from first paint on the first visit of a
+      // session (UniverseHost.jsx plays it, then removes the class). The
+      // timeout guarantees the site is revealed even if the app fails to load.
+      try {
+        var d = document.documentElement;
+        if (!sessionStorage.getItem('fz-intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches && !(navigator.connection && navigator.connection.saveData)) {
+          d.classList.add('intro');
+          setTimeout(function () { d.classList.remove('intro'); }, 10000);
+        }
+      } catch (e) {}
+    </script>
+    <!--seo:start-->
+    <title>Flazyn — The CRM that turns conversations into customers</title>
+    <meta name="description" content="Capture leads, reply on WhatsApp and email, and move every deal forward from one workspace. Flazyn is the conversational CRM for growing teams." />
+    <link rel="canonical" href="https://flazyn.com" />
+    <meta property="og:title" content="Flazyn — The CRM that turns conversations into customers" />
+    <meta property="og:description" content="Capture leads, reply on WhatsApp and email, and move every deal forward from one workspace." />
+    <meta property="og:url" content="https://flazyn.com" />
+    <!--seo:end-->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <title>Zomic — The CRM that turns conversations into customers</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app--></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
