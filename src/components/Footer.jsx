@@ -1,7 +1,8 @@
-// Flazyn — site footer. Columns come from lib/site.js.
+// Flazyn — site footer. Columns come from lib/site.js. The bottom lines
+// carry the registered business details required on every page.
 import { Link } from 'react-router-dom';
 import Logo from './Logo.jsx';
-import { FOOTER_COLUMNS, SITE } from '../lib/site.js';
+import { FOOTER_COLUMNS, SITE, addressLine } from '../lib/site.js';
 
 export default function Footer() {
   return (
@@ -21,9 +22,12 @@ export default function Footer() {
           ))}
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} {SITE.legalName}. All rights reserved.</span>
-          <span>WhatsApp is a trademark of Meta Platforms, Inc. Flazyn is not affiliated with Meta.</span>
+          <span>© {new Date().getFullYear()} {SITE.legalName} trading as {SITE.name} · ABN {SITE.abn} · {addressLine()}</span>
+          <span className="footer-legal">
+            <Link to="/privacy">Privacy</Link> · <Link to="/terms">Terms</Link> · <Link to="/data-deletion">Data deletion</Link> · <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </span>
         </div>
+        <p className="footer-note">WhatsApp is a trademark of Meta Platforms, Inc. Flazyn is not affiliated with Meta.</p>
       </div>
     </footer>
   );

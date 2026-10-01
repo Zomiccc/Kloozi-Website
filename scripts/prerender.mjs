@@ -28,6 +28,16 @@ const ORG = {
   logo: `${SITE.url}/logo-512.png`,
   email: SITE.email,
   description: SITE.description,
+  alternateName: `${SITE.legalName} trading as ${SITE.name}`,
+  taxID: `ABN ${SITE.abn}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: SITE.address.street,
+    addressLocality: SITE.address.locality,
+    addressRegion: SITE.address.region,
+    postalCode: SITE.address.postcode,
+    addressCountry: SITE.address.countryCode,
+  },
 };
 const WEBSITE = { '@type': 'WebSite', '@id': `${SITE.url}/#website`, url: SITE.url, name: SITE.name, publisher: { '@id': ORG['@id'] }, inLanguage: 'en' };
 

@@ -11,9 +11,9 @@
     { "source": "/careers", "destination": "/about", "permanent": false },
     { "source": "/resources/help-center", "destination": "/contact", "permanent": false },
     { "source": "/resources/api-docs", "destination": "/contact", "permanent": false },
-    { "source": "/privacy", "destination": "/legal/privacy", "permanent": true },
-    { "source": "/terms", "destination": "/legal/terms", "permanent": true },
-    { "source": "/data-deletion", "destination": "/legal/data-deletion", "permanent": true }
+    { "source": "/legal/privacy", "destination": "/privacy", "permanent": true },
+    { "source": "/legal/terms", "destination": "/terms", "permanent": true },
+    { "source": "/legal/data-deletion", "destination": "/data-deletion", "permanent": true }
   ],
   "headers": [
     {

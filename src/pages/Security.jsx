@@ -33,7 +33,7 @@ export default function Security() {
           <SectionHead
             eyebrow="Questions?"
             title="Talk to us about security."
-            lead={<>Email <a href={`mailto:${SITE.email}`} className="link-arrow">{SITE.email}</a> or read our <Link to="/legal/privacy" className="link-arrow">Privacy Policy</Link> and <Link to="/legal/data-deletion" className="link-arrow">data deletion instructions</Link>.</>}
+            lead={<>Email <a href={`mailto:${SITE.email}`} className="link-arrow">{SITE.email}</a> or read our <Link to="/privacy" className="link-arrow">Privacy Policy</Link> and <Link to="/data-deletion" className="link-arrow">data deletion instructions</Link>.</>}
           />
         </div>
       </section>

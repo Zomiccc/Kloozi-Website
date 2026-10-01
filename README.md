@@ -60,4 +60,4 @@ scripts/prerender.mjs writes dist/<route>.html with meta, Open Graph, JSON-LD, s
 
 ### Meta / WhatsApp review
 
-Privacy Policy: `/legal/privacy` · Terms: `/legal/terms` · Data deletion instructions: `/legal/data-deletion`.
+Privacy Policy: `/privacy` · Terms: `/terms` · Data deletion instructions: `/data-deletion` (old `/legal/*` URLs redirect).

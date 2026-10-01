@@ -1,69 +1,80 @@
-// Flazyn — Terms of Service.
+// Flazyn — Terms of Service (text supplied by the business, 1 Oct 2026).
+import { Link } from 'react-router-dom';
 import LegalPage from './LegalPage.jsx';
 import { SITE } from '../../lib/site.js';
 
 export default function Terms() {
   return (
-    <LegalPage
-      title="Terms of Service"
-      updated="30 September 2026"
-      intro={[
-        `These Terms of Service (“Terms”) govern your use of the ${SITE.domain} website and the Flazyn service provided by ${SITE.legalName} (“Flazyn”, “we”, “us”). By using the website or the service, you agree to these Terms.`,
-      ]}
-      sections={[
-        {
-          title: '1. Early access',
-          p: ['Flazyn is currently offered as an early-access service. Features may change, be added or be removed, and the service may be interrupted while we improve it. Early access is provided free of charge unless we agree otherwise with you in writing.'],
-        },
-        {
-          title: '2. Accounts',
-          p: ['You must provide accurate information, keep your login details secure, and are responsible for activity in your account. You must be at least 18 years old and able to enter into a binding contract on behalf of yourself or the business you represent.'],
-        },
-        {
-          title: '3. Acceptable use',
-          p: ['You agree not to use Flazyn to:'],
-          list: [
-            'send spam or unsolicited messages, or message people who have not opted in to hear from you;',
-            'violate the WhatsApp Business Messaging Policy, WhatsApp Commerce Policy, Meta’s terms, or any applicable law, including data protection and anti-spam laws;',
-            'upload unlawful, harmful, fraudulent or infringing content;',
-            'attempt to gain unauthorised access to the service or disrupt it;',
-            'resell or reverse engineer the service except where the law allows.',
-          ],
-          after: ['We may suspend accounts that break these rules to protect our users, recipients and the platforms we connect to.'],
-        },
-        {
-          title: '4. Your data',
-          p: ['You own the data you put into Flazyn, including your leads, contacts and conversations (“Customer Data”). You grant us permission to host and process Customer Data only as needed to provide the service. You are responsible for having a lawful basis, including any required consent, for the Customer Data you store and the messages you send. Our handling of personal data is described in our Privacy Policy.'],
-        },
-        {
-          title: '5. Third-party services',
-          p: ['Flazyn connects to third-party services such as the WhatsApp Business Platform provided by Meta. Your use of those services is subject to their own terms, and we are not responsible for their availability or actions. WhatsApp is a trademark of Meta Platforms, Inc.; Flazyn is not affiliated with or endorsed by Meta.'],
-        },
-        {
-          title: '6. Intellectual property',
-          p: ['Flazyn, including its software, design and branding, is owned by us and protected by intellectual property laws. These Terms do not give you any rights to our trademarks. If you send us feedback, we may use it without obligation to you.'],
-        },
-        {
-          title: '7. Termination',
-          p: ['You may stop using Flazyn at any time and ask us to delete your account. We may suspend or end your access if you breach these Terms or if we discontinue the early-access programme, and we will give reasonable notice where we can. You can request a copy of your Customer Data before deletion.'],
-        },
-        {
-          title: '8. Disclaimers',
-          p: ['The service is provided “as is” and “as available” during early access, without warranties of any kind, to the fullest extent permitted by law.'],
-        },
-        {
-          title: '9. Limitation of liability',
-          p: ['To the fullest extent permitted by law, Flazyn will not be liable for any indirect, incidental, special or consequential damages, or for lost profits, revenue or data. Nothing in these Terms limits liability that cannot be limited by law.'],
-        },
-        {
-          title: '10. Changes',
-          p: ['We may update these Terms. We will post the new version here and change the effective date, and notify account holders of material changes by email.'],
-        },
-        {
-          title: '11. Contact',
-          p: [`Questions about these Terms: ${SITE.email}`],
-        },
-      ]}
-    />
+    <LegalPage title="Terms of Service" effective="1 October 2026">
+      <p>
+        These terms govern your use of flazyn.com and the Flazyn service, provided by {SITE.legalName} (ABN {SITE.abn}) trading as
+        Flazyn. By using the website or the service you agree to them on behalf of yourself and the business you represent.
+      </p>
+
+      <h2>1. The service and early access</h2>
+      <p>
+        Flazyn lets businesses capture leads from advertising platforms and websites, organise them in a pipeline, and follow up by
+        phone, WhatsApp, SMS and email, including automations the customer configures. Flazyn is currently offered as an early-access
+        service: features may change, and the service may be interrupted while we improve it. Early access is free unless we agree
+        otherwise in writing.
+      </p>
+
+      <h2>2. Your account</h2>
+      <p>
+        You must give accurate information, keep your login secure, and be at least 18 and authorised to act for your business. You are
+        responsible for activity in your workspace, including by team members you invite.
+      </p>
+
+      <h2>3. Your data and your leads</h2>
+      <p>You own the data you put into Flazyn, including your leads. You are responsible for:</p>
+      <ul>
+        <li>having a lawful basis to collect and contact your leads</li>
+        <li>honouring their opt-outs</li>
+        <li>complying with the policies of every platform you connect, including Meta’s Platform Terms, the WhatsApp Business Policy, LinkedIn’s API Terms and TikTok’s advertising policies</li>
+      </ul>
+      <p>We process lead data only on your instructions, as described in our <Link to="/privacy">Privacy Policy</Link>.</p>
+
+      <h2>4. Acceptable use</h2>
+      <p>You may not use Flazyn to:</p>
+      <ul>
+        <li>send spam or contact people without permission</li>
+        <li>send unlawful, misleading or harassing content</li>
+        <li>collect sensitive information without a lawful basis</li>
+        <li>access other customers’ data or interfere with the service</li>
+        <li>resell it without our written agreement</li>
+      </ul>
+      <p>We may suspend accounts that break these rules.</p>
+
+      <h2>5. Third-party platforms</h2>
+      <p>
+        Integrations with Meta, WhatsApp, LinkedIn, TikTok, Google, Twilio, SendGrid and others depend on those providers. We are not
+        responsible for their availability or policy changes.
+      </p>
+
+      <h2>6. Fees</h2>
+      <p>
+        Paid plans, when introduced, are billed in advance and renew until cancelled. Messaging charges from WhatsApp or SMS providers
+        may apply separately.
+      </p>
+
+      <h2>7. Termination</h2>
+      <p>
+        You can stop using Flazyn and delete your account at any time. We may suspend or end accounts that breach these terms. After
+        termination you can request an export of your data for 30 days, after which it is deleted.
+      </p>
+
+      <h2>8. Liability</h2>
+      <p>
+        The service is provided “as is”. To the extent permitted by law, we are not liable for indirect or consequential loss, and our
+        total liability in any 12 months is limited to the fees you paid us in that period. Nothing in these terms excludes rights you
+        have under the Australian Consumer Law that cannot lawfully be excluded.
+      </p>
+
+      <h2>9. Governing law</h2>
+      <p>
+        These terms are governed by the laws of the Australian Capital Territory, Australia, and you submit to the non-exclusive
+        jurisdiction of its courts.
+      </p>
+    </LegalPage>
   );
 }

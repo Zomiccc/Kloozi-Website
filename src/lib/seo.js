@@ -21,9 +21,9 @@ const PAGES = [
   { path: '/contact', title: 'Contact Flazyn', description: 'Questions, partnerships or early-access requests — send the Flazyn team a message and we will reply by email.', priority: 0.6 },
   { path: '/early-access', title: 'Get early access to Flazyn', description: 'Join the Flazyn early-access list and be among the first teams to use the conversational CRM for WhatsApp, email and lead management.', priority: 0.9 },
   { path: '/blog', title: 'Flazyn Blog — playbooks for conversational selling', description: 'Practical guides on lead response, WhatsApp Business, pipelines and CRM adoption from the Flazyn team.', priority: 0.6 },
-  { path: '/legal/privacy', title: 'Privacy Policy | Flazyn', description: 'How Flazyn collects, uses, shares and protects personal data, including data processed through the WhatsApp Business Platform.', priority: 0.3 },
-  { path: '/legal/terms', title: 'Terms of Service | Flazyn', description: 'The terms that govern use of the Flazyn website and early-access service.', priority: 0.3 },
-  { path: '/legal/data-deletion', title: 'Data Deletion Instructions | Flazyn', description: 'How to request deletion of your personal data from Flazyn, including data connected through Meta and WhatsApp.', priority: 0.3 },
+  { path: '/privacy', title: 'Privacy Policy | Flazyn', description: 'How Flazyn (HB&YM Pty Ltd) collects, uses, shares and protects personal information, including lead data from Meta, LinkedIn and TikTok, under the Australian Privacy Principles.', priority: 0.3 },
+  { path: '/terms', title: 'Terms of Service | Flazyn', description: 'The terms that govern use of flazyn.com and the Flazyn early-access CRM service, provided by HB&YM Pty Ltd.', priority: 0.3 },
+  { path: '/data-deletion', title: 'Data Deletion Instructions | Flazyn', description: 'How to delete your data from Flazyn — leads, connected platforms such as Facebook, or your whole account — and how to request deletion by email.', priority: 0.3 },
 ];
 
 const BLOG = POSTS.map((p) => ({

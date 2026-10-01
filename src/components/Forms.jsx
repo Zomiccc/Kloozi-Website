@@ -76,7 +76,7 @@ export function EarlyAccessForm() {
       </div>
       <label className="consent">
         <input type="checkbox" name="consent" value="yes" required />
-        <span>I agree to Flazyn emailing me about early access. I can unsubscribe at any time. See our <Link to="/legal/privacy">Privacy Policy</Link>.</span>
+        <span>I agree to Flazyn emailing me about early access. I can unsubscribe at any time. See our <Link to="/privacy">Privacy Policy</Link>.</span>
       </label>
       <Honeypot />
       {error && <div className="form-error" role="alert">{error}</div>}
@@ -104,7 +104,7 @@ export function ContactForm() {
         </div>
       </div>
       <div className="field"><label htmlFor="c-msg">Message</label><textarea id="c-msg" name="message" className="input" required minLength={10} maxLength={4000} /></div>
-      <p className="small" style={{ margin: 0 }}>We use your details only to reply to you. See our <Link to="/legal/privacy" style={{ textDecoration: 'underline' }}>Privacy Policy</Link>.</p>
+      <p className="small" style={{ margin: 0 }}>We use your details only to reply to you. See our <Link to="/privacy" style={{ textDecoration: 'underline' }}>Privacy Policy</Link>.</p>
       <Honeypot />
       {error && <div className="form-error" role="alert">{error}</div>}
       <SubmitButton sending={status === 'sending'}>Send message</SubmitButton>

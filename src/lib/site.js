@@ -3,16 +3,21 @@
 
 export const SITE = {
   name: 'Flazyn',
-  legalName: 'Flazyn',
+  // Registered business (Australia). Shown in the footer, legal pages and
+  // structured data — keep in sync with the ABN register.
+  legalName: 'HB&YM Pty Ltd',
+  abn: '27 688 842 140',
+  address: { street: '87 Eccles Cct', locality: 'Macgregor', region: 'ACT', postcode: '2615', country: 'Australia', countryCode: 'AU' },
   domain: 'flazyn.com',
   url: 'https://flazyn.com',
-  // TODO(before launch): confirm the public contact inbox.
   email: 'hello@flazyn.com',
   tagline: 'The CRM that turns conversations into customers.',
   description:
     'Flazyn is a CRM for teams that sell through conversations. Capture leads, reply on WhatsApp and email, and move every deal forward from one workspace. Now in early access.',
   status: 'Early access',
 };
+
+export const addressLine = () => `${SITE.address.street}, ${SITE.address.locality} ${SITE.address.region} ${SITE.address.postcode}, ${SITE.address.country}`;
 
 export const PRODUCT_LINKS = [
   { to: '/product/lead-management', label: 'Lead Management', desc: 'One pipeline for every lead, from every source.', icon: 'Users' },
@@ -43,9 +48,9 @@ export const FOOTER_COLUMNS = [
   {
     title: 'Legal',
     links: [
-      { to: '/legal/privacy', label: 'Privacy Policy' },
-      { to: '/legal/terms', label: 'Terms of Service' },
-      { to: '/legal/data-deletion', label: 'Data Deletion' },
+      { to: '/privacy', label: 'Privacy Policy' },
+      { to: '/terms', label: 'Terms of Service' },
+      { to: '/data-deletion', label: 'Data Deletion' },
     ],
   },
 ];
