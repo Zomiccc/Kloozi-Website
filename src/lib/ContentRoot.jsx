@@ -13,8 +13,9 @@ export default function ContentRoot({ initial, children }) {
   const [Runtime, setRuntime] = useState(null);
 
   useEffect(() => {
-    // Production pages carry their content inline; the dev server doesn't.
-    if (!initial) {
+    // Production pages carry their published content inline. If a page has
+    // none (dev server, or a build that couldn't reach storage), fetch it.
+    if (!initial?.updatedAt) {
       fetch('/api/content')
         .then((r) => (r.ok ? r.json() : null))
         .then((c) => { if (c && Object.keys(c).length) setContent({ ...EMPTY_CONTENT, ...c }); })

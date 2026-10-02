@@ -52,6 +52,9 @@ async function optimiseImage(file) {
 const safeName = (name) => name.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '').slice(-80) || 'file';
 
 /* Upload a file; returns { url, type: 'image' | 'video' }. */
+let uploadModePromise;
+const uploadMode = () => (uploadModePromise ||= api.session().then((s) => s.upload).catch(() => 'token'));
+
 export async function uploadFile(file, storage, onProgress) {
   const isVideo = VIDEO_TYPES.includes(file.type);
   if (!isVideo && !IMAGE_TYPES.includes(file.type)) throw new Error('Please choose a JPG, PNG, WebP, AVIF or GIF image, or an MP4/WebM video.');
@@ -60,8 +63,10 @@ export async function uploadFile(file, storage, onProgress) {
   const name = safeName(ready.name);
 
   if (storage === 'blob') {
-    const { upload } = await import('@vercel/blob/client');
-    const result = await upload(`media/${name}`, ready, {
+    const client = await import('@vercel/blob/client');
+    // Newer token-free stores use presigned uploads; classic stores use client tokens.
+    const send = (await uploadMode()) === 'presigned' ? client.uploadPresigned : client.upload;
+    const result = await send(`media/${name}`, ready, {
       access: 'public',
       handleUploadUrl: '/api/admin/upload',
       contentType: ready.type,

@@ -1,5 +1,6 @@
-// CMS storage. Production: Vercel Blob (needs BLOB_READ_WRITE_TOKEN, which
-// Vercel adds when a Blob store is connected to the project).
+// CMS storage. Production: Vercel Blob. Connecting a store to the project
+// adds either BLOB_READ_WRITE_TOKEN (classic stores) or BLOB_STORE_ID (newer
+// stores, which authenticate with Vercel's built-in OIDC token) — both work.
 // Local development without a token: files under .cms-local/ (gitignored),
 // with media served by the Vite dev server at /cms-media/*.
 //
@@ -15,7 +16,9 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const LOCAL_DIR = path.join(process.cwd(), '.cms-local');
-const useBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
+const useBlob = () => !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
+/* 'token' = classic read-write token, 'oidc' = newer token-free stores. */
+export const blobAuth = () => (process.env.BLOB_READ_WRITE_TOKEN ? 'token' : process.env.BLOB_STORE_ID ? 'oidc' : null);
 
 export function storageMode() {
   if (useBlob()) return 'blob';

@@ -10,7 +10,7 @@
 //   POST upload-local                  dev-only upload into .cms-local/
 import { readBody, readRaw, send, sameOrigin, clientIp } from '../_lib/http.js';
 import { adminConfigured, verifyPassword, createSession, clearSession, getSession, loginAllowed, recordFailedLogin } from '../_lib/auth.js';
-import { storageMode, readDoc, writeDoc, addHistory, listHistory, readHistory, listMedia, deleteMedia, saveLocalMedia } from '../_lib/storage.js';
+import { storageMode, blobAuth, readDoc, writeDoc, addHistory, listHistory, readHistory, listMedia, deleteMedia, saveLocalMedia } from '../_lib/storage.js';
 import { cleanContent } from '../_lib/content.js';
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     // ── public: login / session / logout ──
     if (action === 'session' && method === 'GET') {
       const s = getSession(req);
-      return send(res, 200, { authenticated: !!s, email: s?.sub || null, configured: adminConfigured(), storage: storageMode(), rebuild: !!process.env.VERCEL_DEPLOY_HOOK_URL });
+      return send(res, 200, { authenticated: !!s, email: s?.sub || null, configured: adminConfigured(), storage: storageMode(), upload: blobAuth() === 'oidc' ? 'presigned' : 'token', rebuild: !!process.env.VERCEL_DEPLOY_HOOK_URL });
     }
     if (action === 'login' && method === 'POST') {
       if (!sameOrigin(req)) return send(res, 403, { error: 'Forbidden.' });
@@ -109,20 +109,36 @@ export default async function handler(req, res) {
       }
       case 'POST upload': {
         if (storageMode() !== 'blob') return send(res, 400, { error: 'Blob storage is not configured.' });
-        const { handleUpload } = await import('@vercel/blob/client');
         const body = await readBody(req, 100_000);
+        const check = (pathname) => {
+          if (!getSession(req)) throw new Error('Not authorised');
+          if (!/^media\/[\w.-]{1,120}$/.test(pathname)) throw new Error('Invalid file name');
+        };
+        const limits = { allowedContentTypes: [...IMAGE_TYPES, ...VIDEO_TYPES], maximumSizeInBytes: MAX_UPLOAD };
+
+        // Newer stores (BLOB_STORE_ID + Vercel OIDC): the browser gets a
+        // short-lived presigned upload URL scoped to this one file.
+        if (blobAuth() === 'oidc') {
+          const { handleUploadPresigned } = await import('@vercel/blob/client');
+          const { issueSignedToken } = await import('@vercel/blob');
+          const result = await handleUploadPresigned({
+            body,
+            request: req,
+            getSignedToken: async (pathname) => {
+              check(pathname);
+              const token = await issueSignedToken({ pathname, operations: ['put'], validUntil: Date.now() + 30 * 60_000, ...limits });
+              return { token, urlOptions: { addRandomSuffix: true, ...limits } };
+            },
+          });
+          return send(res, 200, result);
+        }
+
+        // Classic stores (BLOB_READ_WRITE_TOKEN): client-token handshake.
+        const { handleUpload } = await import('@vercel/blob/client');
         const result = await handleUpload({
           body,
           request: req,
-          onBeforeGenerateToken: async (pathname) => {
-            if (!getSession(req)) throw new Error('Not authorised');
-            if (!/^media\/[\w.-]{1,120}$/.test(pathname)) throw new Error('Invalid file name');
-            return {
-              allowedContentTypes: [...IMAGE_TYPES, ...VIDEO_TYPES],
-              maximumSizeInBytes: MAX_UPLOAD,
-              addRandomSuffix: true,
-            };
-          },
+          onBeforeGenerateToken: async (pathname) => { check(pathname); return { ...limits, addRandomSuffix: true }; },
           onUploadCompleted: async () => {},
         });
         return send(res, 200, result);

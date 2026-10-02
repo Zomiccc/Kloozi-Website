@@ -22,7 +22,7 @@ export function safeUrl(v) {
   if (typeof v !== 'string') return '';
   const u = v.trim().slice(0, 1000);
   if (/^\/(?!\/)[\w\-./%]*$/.test(u)) return u; // site-relative, e.g. /images/x.webp
-  if (/^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\/[\w\-./%]+$/i.test(u)) return u;
+  if (/^https:\/\/[a-z0-9-]+\.(?:public\.)?blob\.vercel-storage\.com\/[\w\-./%]+$/i.test(u)) return u;
   return '';
 }
 
