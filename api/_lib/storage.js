@@ -20,6 +20,10 @@ const useBlob = () => !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_S
 /* 'token' = classic read-write token, 'oidc' = newer token-free stores. */
 export const blobAuth = () => (process.env.BLOB_READ_WRITE_TOKEN ? 'token' : process.env.BLOB_STORE_ID ? 'oidc' : null);
 
+/* Public stores serve files straight from the CDN (what the site needs).
+   Set BLOB_ACCESS=private only if the store was created as private. */
+export const blobAccess = () => (process.env.BLOB_ACCESS === 'private' ? 'private' : 'public');
+
 export function storageMode() {
   if (useBlob()) return 'blob';
   return process.env.VERCEL ? 'missing' : 'local';
@@ -71,7 +75,7 @@ export async function writeDoc(name, data) {
   if (useBlob()) {
     const { put, del } = await blobApi();
     const before = await blobList(`cms/${name}-`);
-    await put(`cms/${name}.json`, body, { access: 'public', addRandomSuffix: true, contentType: 'application/json', cacheControlMaxAge: 60 });
+    await put(`cms/${name}.json`, body, { access: blobAccess(), addRandomSuffix: true, contentType: 'application/json', cacheControlMaxAge: 60 });
     if (before.length) await del(before.map((b) => b.url));
     return;
   }
@@ -85,7 +89,7 @@ export async function addHistory(data) {
   const body = JSON.stringify(data);
   if (useBlob()) {
     const { put } = await blobApi();
-    await put(`cms/history/${stamp}.json`, body, { access: 'public', addRandomSuffix: true, contentType: 'application/json' });
+    await put(`cms/history/${stamp}.json`, body, { access: blobAccess(), addRandomSuffix: true, contentType: 'application/json' });
     return;
   }
   await fs.mkdir(path.join(LOCAL_DIR, 'cms', 'history'), { recursive: true });
@@ -159,3 +163,29 @@ export async function saveLocalMedia(name, buffer) {
 }
 
 export const LOCAL_MEDIA_DIR = path.join(LOCAL_DIR, 'media');
+
+/* Admin "Test storage": try each operation the CMS needs and report the
+   exact result, so setup problems are visible instead of a bare 500. */
+export async function diagnoseStorage() {
+  const steps = [];
+  const step = async (name, fn) => {
+    try { steps.push({ name, ok: true, detail: (await fn()) || 'ok' }); return true; } catch (e) { steps.push({ name, ok: false, detail: e.message }); return false; }
+  };
+  if (!useBlob()) {
+    steps.push({ name: 'storage', ok: storageMode() === 'local', detail: storageMode() === 'local' ? 'local files (development)' : 'No Blob store connected (BLOB_STORE_ID / BLOB_READ_WRITE_TOKEN missing)' });
+    return steps;
+  }
+  const { put, del, list } = await blobApi();
+  steps.push({ name: 'credentials', ok: true, detail: `${blobAuth()} · store ${process.env.BLOB_STORE_ID || '(from token)'} · OIDC token ${process.env.VERCEL_OIDC_TOKEN ? 'present' : 'from request'}` });
+  await step('list files', async () => `${(await list({ prefix: 'cms/', limit: 5 })).blobs.length} CMS file(s) found`);
+  let url = null;
+  const wrote = await step(`write test file (${blobAccess()})`, async () => { url = (await put('cms/healthcheck.txt', 'ok', { access: blobAccess(), addRandomSuffix: true, contentType: 'text/plain' })).url; return url; });
+  if (!wrote && blobAccess() === 'public') {
+    await step('write test file (private) — is the store private?', async () => { const r = await put('cms/healthcheck.txt', 'ok', { access: 'private', addRandomSuffix: true, contentType: 'text/plain' }); await del(r.url); return 'yes — this store is PRIVATE; the website needs a PUBLIC store for images'; });
+  }
+  if (url) {
+    await step('read test file publicly', async () => { const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return 'readable'; });
+    await step('delete test file', async () => { await del(url); });
+  }
+  return steps;
+}

@@ -10,7 +10,7 @@
 //   POST upload-local                  dev-only upload into .cms-local/
 import { readBody, readRaw, send, sameOrigin, clientIp } from '../_lib/http.js';
 import { adminConfigured, verifyPassword, createSession, clearSession, getSession, loginAllowed, recordFailedLogin } from '../_lib/auth.js';
-import { storageMode, blobAuth, readDoc, writeDoc, addHistory, listHistory, readHistory, listMedia, deleteMedia, saveLocalMedia } from '../_lib/storage.js';
+import { storageMode, blobAuth, diagnoseStorage, readDoc, writeDoc, addHistory, listHistory, readHistory, listMedia, deleteMedia, saveLocalMedia } from '../_lib/storage.js';
 import { cleanContent } from '../_lib/content.js';
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
@@ -33,6 +33,7 @@ async function triggerRebuild() {
 export default async function handler(req, res) {
   const action = String(req.query?.action || '');
   const method = req.method;
+  let session = null;
 
   try {
     // ── public: login / session / logout ──
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
     const isUploadCallback = action === 'upload' && method === 'POST' && req.headers['x-vercel-signature'];
 
     // ── everything below needs a valid admin session ──
-    const session = getSession(req);
+    session = getSession(req);
     if (!session && !isUploadCallback) return send(res, 401, { error: 'Please log in.' });
     if (method !== 'GET' && !isUploadCallback && !sameOrigin(req)) return send(res, 403, { error: 'Forbidden.' });
 
@@ -91,6 +92,8 @@ export default async function handler(req, res) {
         const rebuild = await triggerRebuild();
         return send(res, 200, { ok: true, rebuild, publishedAt: clean.updatedAt });
       }
+      case 'GET diagnose':
+        return send(res, 200, { storage: storageMode(), auth: blobAuth(), steps: await diagnoseStorage() });
       case 'GET history':
         return send(res, 200, { items: await listHistory() });
       case 'POST restore': {
@@ -156,6 +159,8 @@ export default async function handler(req, res) {
     }
   } catch (err) {
     console.error(`[admin:${action}]`, err);
-    return send(res, err.status || 500, { error: err.status ? err.message : 'Something went wrong.' });
+    // The signed-in admin sees the real reason; everyone else a generic message.
+    const detail = session ? `Server error: ${err.message}` : 'Something went wrong.';
+    return send(res, err.status || 500, { error: err.status ? err.message : detail });
   }
 }

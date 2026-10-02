@@ -23,6 +23,7 @@ export const api = {
   history: () => call('history'),
   restore: (id) => call('restore', { method: 'POST', body: { id } }),
   media: () => call('media'),
+  diagnose: () => call('diagnose'),
   deleteMedia: (url) => call('media-delete', { method: 'POST', body: { url } }),
 };
 

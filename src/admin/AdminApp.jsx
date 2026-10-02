@@ -355,6 +355,8 @@ function Media({ storage }) {
 /* ─────────────────────────── settings ─────────────────────────── */
 function SettingsTab({ content, update, session }) {
   const s = content.settings || {};
+  const [diag, setDiag] = useState(null);
+  const runDiag = async () => { setDiag('running'); try { setDiag(await api.diagnose()); } catch (e) { setDiag({ steps: [{ name: 'request', ok: false, detail: e.message }] }); } };
   const set = (patch) => update((c) => ({ ...c, settings: { ...c.settings, ...patch } }));
   return (
     <div className="adm-stack">
@@ -372,6 +374,12 @@ function SettingsTab({ content, update, session }) {
         <h2>Publishing setup</h2>
         <div className={`adm-check ${session.storage === 'blob' ? 'ok' : 'bad'}`}>{session.storage === 'blob' ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />} Storage: {session.storage === 'blob' ? 'Vercel Blob connected' : session.storage === 'local' ? 'local files (development only)' : 'not connected'}</div>
         <div className={`adm-check ${session.rebuild ? 'ok' : 'bad'}`}>{session.rebuild ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />} Auto-rebuild: {session.rebuild ? 'deploy hook configured' : 'add VERCEL_DEPLOY_HOOK_URL (Vercel → Settings → Git → Deploy Hooks)'}</div>
+        <div style={{ marginTop: 14 }}><button type="button" className="adm-btn" onClick={runDiag} disabled={diag === 'running'}>{diag === 'running' ? <Loader2 size={15} className="spin" /> : <CheckCircle2 size={15} />} Test storage</button></div>
+        {diag && diag !== 'running' && (
+          <div style={{ marginTop: 12 }}>
+            {diag.steps.map((st) => <div key={st.name} className={`adm-check ${st.ok ? 'ok' : 'bad'}`}>{st.ok ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />} <span><strong>{st.name}</strong> — <span style={{ wordBreak: 'break-word' }}>{st.detail}</span></span></div>)}
+          </div>
+        )}
       </div>
     </div>
   );
