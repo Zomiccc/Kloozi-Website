@@ -10,6 +10,7 @@ import { PipelineMock, ChatMock, EmailMock, FlowMock, ChartMock, SourcesMock } f
 export function LeadManagement() {
   return (
     <FeaturePage
+      k="p.leads"
       eyebrow="Product · Lead Management"
       title="Every lead, from every channel, in one pipeline."
       lead="Flazyn captures leads from WhatsApp, forms, ads and email into a single visual pipeline — so nothing slips between tools or teammates."
@@ -37,6 +38,7 @@ export function LeadManagement() {
 export function WhatsAppAutomation() {
   return (
     <FeaturePage
+      k="p.whatsapp"
       eyebrow="Product · WhatsApp"
       title="Your team’s WhatsApp, organised and on time."
       lead="Flazyn is built for the official WhatsApp Business Platform. Share one business number across your team, reply fast and keep every chat linked to the lead."
@@ -69,6 +71,7 @@ export function WhatsAppAutomation() {
 export function EmailSystem() {
   return (
     <FeaturePage
+      k="p.email"
       eyebrow="Product · Email"
       title="Email campaigns, right inside your CRM."
       lead="Send broadcasts and follow-ups to segments built from your live pipeline. No exporting lists, no separate email tool."
@@ -92,6 +95,7 @@ export function EmailSystem() {
 export function Automations() {
   return (
     <FeaturePage
+      k="p.automations"
       eyebrow="Product · Automations"
       title="Follow-up that happens on its own."
       lead="Route new leads, send the first reply and create reminders automatically — so your team spends time on conversations, not admin."
@@ -115,6 +119,7 @@ export function Automations() {
 export function Analytics() {
   return (
     <FeaturePage
+      k="p.analytics"
       eyebrow="Product · Analytics"
       title="Know what’s working — and what to do next."
       lead="Clear reports on response times, sources and pipeline health, so your team knows where to focus."

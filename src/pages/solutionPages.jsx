@@ -11,10 +11,11 @@ import { UserPlus, FileSpreadsheet, FolderKanban as Folder } from 'lucide-react'
 export function RealEstate() {
   return (
     <FeaturePage
+      k="s.realestate"
       eyebrow="Solutions · Real Estate"
       title="Reply to property enquiries first. Win more listings."
       lead="Buyers and sellers message several agents at once. Flazyn helps you answer first on WhatsApp, track every buyer by listing and follow up on time."
-      heroArt={<PhotoStage eager src="/images/real-estate.webp" alt="An estate agent showing a home to a young couple"><BubbleCard className="bl" who="WhatsApp · new enquiry" text="Hi! Is the 3-bed on Elm Street still available?" reply="It is! I can show it tomorrow at 11am or 4pm." /></PhotoStage>}
+      heroArt={<PhotoStage eager k="s.realestate.photo" src="/images/real-estate.webp" alt="An estate agent showing a home to a young couple"><BubbleCard className="bl" who="WhatsApp · new enquiry" text="Hi! Is the 3-bed on Elm Street still available?" reply="It is! I can show it tomorrow at 11am or 4pm." /></PhotoStage>}
       capabilities={{
         eyebrow: 'The problem',
         title: 'Real estate moves at the speed of the first reply.',
@@ -38,10 +39,11 @@ export function RealEstate() {
 export function SalesTeams() {
   return (
     <FeaturePage
+      k="s.sales"
       eyebrow="Solutions · Sales Teams"
       title="A pipeline your whole sales team trusts."
       lead="Shared inboxes, fair lead assignment and clear next steps — so managers see the real picture and reps spend their time selling."
-      heroArt={<PhotoStage eager src="/images/sales-team.webp" alt="A sales team gathered around a laptop"><StatCard className="bl" icon={UserPlus} hue="mint" title="New lead assigned" sub="Round-robin · Marco" /></PhotoStage>}
+      heroArt={<PhotoStage eager k="s.sales.photo" src="/images/sales-team.webp" alt="A sales team gathered around a laptop"><StatCard className="bl" icon={UserPlus} hue="mint" title="New lead assigned" sub="Round-robin · Marco" /></PhotoStage>}
       capabilities={{
         eyebrow: 'The problem',
         title: 'When the CRM is a chore, the data is wrong.',
@@ -64,10 +66,11 @@ export function SalesTeams() {
 export function Agencies() {
   return (
     <FeaturePage
+      k="s.agencies"
       eyebrow="Solutions · Agencies"
       title="Every client pipeline, one calm workspace."
       lead="Run a separate pipeline for each client, keep conversations organised and report clearly — without juggling logins."
-      heroArt={<PhotoStage eager src="/images/agency.webp" alt="An agency team meeting in a bright office"><StatCard className="bl" icon={Folder} hue="sky" title="Client pipeline: Northwind" sub="3 new leads today" /></PhotoStage>}
+      heroArt={<PhotoStage eager k="s.agencies.photo" src="/images/agency.webp" alt="An agency team meeting in a bright office"><StatCard className="bl" icon={Folder} hue="sky" title="Client pipeline: Northwind" sub="3 new leads today" /></PhotoStage>}
       capabilities={{
         eyebrow: 'The problem',
         title: 'Agencies juggle too many inboxes.',
@@ -90,10 +93,11 @@ export function Agencies() {
 export function Startups() {
   return (
     <FeaturePage
+      k="s.startups"
       eyebrow="Solutions · Startups"
       title="A real CRM from your very first customer."
       lead="Move out of the spreadsheet in an afternoon. Capture leads, talk to customers on WhatsApp and email, and build a pipeline that grows with you."
-      heroArt={<PhotoStage eager src="/images/startup.webp" alt="Three founders working together on a laptop"><StatCard className="bl" icon={FileSpreadsheet} hue="sun" title="Spreadsheet imported" sub="Duplicates merged" /></PhotoStage>}
+      heroArt={<PhotoStage eager k="s.startups.photo" src="/images/startup.webp" alt="Three founders working together on a laptop"><StatCard className="bl" icon={FileSpreadsheet} hue="sun" title="Spreadsheet imported" sub="Duplicates merged" /></PhotoStage>}
       capabilities={{
         eyebrow: 'Why Flazyn',
         title: 'Built for small teams that move fast.',

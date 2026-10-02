@@ -4,6 +4,7 @@ import { Lock, KeyRound, Database, Trash2, EyeOff, MessageCircle } from 'lucide-
 import { Link } from 'react-router-dom';
 import { PageHero, SectionHead, FeatureGrid, CTA } from '../components/sections.jsx';
 import { SITE } from '../lib/site.js';
+import { Blocks } from '../lib/content.jsx';
 
 const PRACTICES = [
   { icon: Lock, title: 'Encryption in transit', body: 'All traffic to Flazyn is served over HTTPS/TLS.' },
@@ -18,6 +19,7 @@ export default function Security() {
   return (
     <>
       <PageHero
+        k="security.hero"
         center
         eyebrow="Trust & Security"
         title="Your customers’ trust is our product."
@@ -25,18 +27,20 @@ export default function Security() {
       />
       <section className="section" style={{ paddingTop: 24 }}>
         <div className="shell">
-          <FeatureGrid items={PRACTICES} />
+          <FeatureGrid k="security.items" items={PRACTICES} />
         </div>
       </section>
       <section className="section section-alt">
         <div className="shell">
           <SectionHead
+            k="security.cta"
             eyebrow="Questions?"
             title="Talk to us about security."
             lead={<>Email <a href={`mailto:${SITE.email}`} className="link-arrow">{SITE.email}</a> or read our <Link to="/privacy" className="link-arrow">Privacy Policy</Link> and <Link to="/data-deletion" className="link-arrow">data deletion instructions</Link>.</>}
           />
         </div>
       </section>
+      <Blocks k="security.bottom" />
       <CTA />
     </>
   );

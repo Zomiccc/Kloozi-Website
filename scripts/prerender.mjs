@@ -11,7 +11,21 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
 const ssr = await import(pathToFileURL(path.join(root, 'dist-ssr', 'entry-server.js')).href);
-const { render, ROUTES, NOT_FOUND, canonical, SITE, POSTS, HOME_FAQ } = ssr;
+const { render, routesFor, applySeo, NOT_FOUND, canonical, SITE, POSTS, HOME_FAQ } = ssr;
+const { readDoc } = await import(pathToFileURL(path.join(root, 'api', '_lib', 'storage.js')).href);
+
+// The published CMS content (admin panel) is applied to every page and
+// embedded in the HTML so the browser hydrates exactly the same content.
+let content = {};
+try {
+  content = (await readDoc('published')) || {};
+  console.log(content.updatedAt ? `Using CMS content published ${content.updatedAt}` : 'No published CMS content — using built-in copy');
+} catch (err) {
+  console.warn('Could not load CMS content, using built-in copy:', err.message);
+}
+const POSTS_LIVE = Array.isArray(content.posts) ? content.posts : POSTS;
+const ROUTES = routesFor(POSTS_LIVE).map((r) => applySeo(r, content));
+const absUrl = (u) => (!u ? `${SITE.url}/og.png` : /^https?:/.test(u) ? u : `${SITE.url}${u}`);
 
 const template = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
 const OG_IMAGE = `${SITE.url}/og.png`;
@@ -65,11 +79,15 @@ function structuredData(route) {
   if (route.path === '/') {
     graph.push({
       '@type': 'FAQPage',
-      mainEntity: HOME_FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      mainEntity: HOME_FAQ.map((f, i) => ({
+        '@type': 'Question',
+        name: content.text?.[`home.faq.${i}.q`] || f.q,
+        acceptedAnswer: { '@type': 'Answer', text: content.text?.[`home.faq.${i}.a`] || f.a },
+      })),
     });
   }
   if (route.type === 'article') {
-    const post = POSTS.find((p) => `/blog/${p.slug}` === route.path);
+    const post = POSTS_LIVE.find((p) => `/blog/${p.slug}` === route.path);
     graph.push({
       '@type': 'BlogPosting',
       headline: post.title,
@@ -78,7 +96,7 @@ function structuredData(route) {
       dateModified: post.date,
       author: { '@id': ORG['@id'] },
       publisher: { '@id': ORG['@id'] },
-      image: `${SITE.url}${post.image}`,
+      image: absUrl(post.image),
       mainEntityOfPage: canonical(route.path),
     });
   }
@@ -87,8 +105,8 @@ function structuredData(route) {
 
 function head(route) {
   const url = canonical(route.path);
-  const post = route.type === 'article' && POSTS.find((p) => `/blog/${p.slug}` === route.path);
-  const image = post ? `${SITE.url}${post.image}` : OG_IMAGE;
+  const post = route.type === 'article' && POSTS_LIVE.find((p) => `/blog/${p.slug}` === route.path);
+  const image = post?.image ? absUrl(post.image) : OG_IMAGE;
   const tags = [
     `<title>${esc(route.title)}</title>`,
     `<meta name="description" content="${esc(route.description)}" />`,
@@ -99,7 +117,7 @@ function head(route) {
     `<meta property="og:description" content="${esc(route.description)}" />`,
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:image" content="${image}" />`,
-    ...(post ? [] : ['<meta property="og:image:width" content="1200" />', '<meta property="og:image:height" content="630" />']),
+    ...(post?.image ? [] : ['<meta property="og:image:width" content="1200" />', '<meta property="og:image:height" content="630" />']),
     `<meta property="og:image:alt" content="${SITE.name} — ${esc(SITE.tagline)}" />`,
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${esc(route.title)}" />`,
@@ -111,11 +129,14 @@ function head(route) {
   return tags.join('\n    ');
 }
 
+const embedded = `<script id="__cms" type="application/json">${json(content)}</script>`;
+
 function page(route, url) {
-  const html = render(url);
+  const html = render(url, content);
   return template
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, head(route))
-    .replace('<!--app-->', html);
+    .replace('<!--app-->', html)
+    .replace('</body>', `  ${embedded}\n  </body>`);
 }
 
 function write(file, contents) {
@@ -128,6 +149,10 @@ for (const route of ROUTES) {
   write(route.path === '/' ? 'index.html' : `${route.path.slice(1)}.html`, page(route, route.path));
 }
 write('404.html', page(NOT_FOUND, '/__not-found__'));
+// The admin dashboard is a client-only app: an empty, unindexed shell.
+write('admin.html', template
+  .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, '<title>Admin | Flazyn</title>\n    <meta name="robots" content="noindex, nofollow" />')
+  .replace('<!--app-->', ''));
 
 const today = new Date().toISOString().slice(0, 10);
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -138,6 +163,7 @@ ${ROUTES.map((r) => `  <url><loc>${canonical(r.path)}</loc><lastmod>${r.date || 
 write('robots.txt', `User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin
 
 Sitemap: ${SITE.url}/sitemap.xml
 `);

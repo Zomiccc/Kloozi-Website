@@ -26,16 +26,20 @@ const PAGES = [
   { path: '/data-deletion', title: 'Data Deletion Instructions | Flazyn', description: 'How to delete your data from Flazyn — leads, connected platforms such as Facebook, or your whole account — and how to request deletion by email.', priority: 0.3 },
 ];
 
-const BLOG = POSTS.map((p) => ({
+export const PAGE_ROUTES = PAGES;
+
+const blogRoute = (p) => ({
   path: `/blog/${p.slug}`,
   title: `${p.title} | Flazyn Blog`,
   description: p.description,
   priority: 0.5,
   type: 'article',
   date: p.date,
-}));
+});
 
-export const ROUTES = [...PAGES, ...BLOG];
+/* All indexable routes, given the current blog posts (CMS or built-in). */
+export const routesFor = (posts = POSTS) => [...PAGES, ...posts.map(blogRoute)];
+export const ROUTES = routesFor(POSTS);
 
 export const NOT_FOUND = {
   path: '/404',
@@ -44,9 +48,18 @@ export const NOT_FOUND = {
   noindex: true,
 };
 
-export function metaFor(pathname) {
+/* Merge admin SEO overrides (content.seo[path]) into a route's meta. */
+export function applySeo(meta, content) {
+  const o = content?.seo?.[meta.path];
+  if (!o) return meta;
+  return { ...meta, title: o.title || meta.title, description: o.description || meta.description };
+}
+
+export function metaFor(pathname, content) {
   const clean = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  return ROUTES.find((r) => r.path === clean) || NOT_FOUND;
+  const posts = Array.isArray(content?.posts) ? content.posts : POSTS;
+  const route = routesFor(posts).find((r) => r.path === clean) || NOT_FOUND;
+  return applySeo(route, content);
 }
 
 export const canonical = (path) => `${SITE.url}${path === '/' ? '' : path}`;

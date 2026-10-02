@@ -2,16 +2,18 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import { CTA } from '../components/sections.jsx';
-import { POSTS } from '../lib/posts.js';
+import { postBlocks } from '../lib/posts.js';
+import { usePosts } from '../lib/content.jsx';
 import { PostCard, formatDate } from './Blog.jsx';
 import NotFound from './NotFound.jsx';
 import { Photo } from '../components/Photo.jsx';
 
 export default function BlogPost() {
   const { slug } = useParams();
-  const post = POSTS.find((p) => p.slug === slug);
+  const posts = usePosts();
+  const post = posts.find((p) => p.slug === slug);
   if (!post) return <NotFound />;
-  const more = POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  const more = posts.filter((p) => p.slug !== slug).slice(0, 2);
 
   return (
     <>
@@ -31,9 +33,9 @@ export default function BlogPost() {
           </div>
         </header>
         <div className="shell">
-          <Photo eager src={post.image} alt={post.imageAlt} style={{ aspectRatio: '16 / 7', maxWidth: 960, margin: '0 auto 48px' }} />
+          {post.image && <Photo eager src={post.image} alt={post.imageAlt} style={{ aspectRatio: '16 / 7', maxWidth: 960, margin: '0 auto 48px' }} />}
           <div className="prose">
-            {post.body.map((b, i) => {
+            {postBlocks(post.body).map((b, i) => {
               if (b.type === 'h2') return <h2 key={i}>{b.text}</h2>;
               if (b.type === 'ul') return <ul key={i}>{b.items.map((it) => <li key={it}>{it}</li>)}</ul>;
               return <p key={i}>{b.text}</p>;

@@ -101,3 +101,27 @@ export const POSTS = [
     ],
   },
 ];
+
+/* Posts written in the admin store their body as plain text:
+     ## A heading
+     - a bullet point
+     a blank line starts a new paragraph
+   Built-in posts use the structured array form above. */
+export function postBlocks(body) {
+  if (Array.isArray(body)) return body;
+  const blocks = [];
+  for (const chunk of String(body || '').split(/\n\s*\n/)) {
+    const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) continue;
+    if (lines.every((l) => /^[-*] /.test(l))) blocks.push({ type: 'ul', items: lines.map((l) => l.slice(2)) });
+    else if (lines.length === 1 && lines[0].startsWith('## ')) blocks.push({ type: 'h2', text: lines[0].slice(3) });
+    else blocks.push({ type: 'p', text: lines.join(' ') });
+  }
+  return blocks;
+}
+
+/* The reverse, so built-in posts can be edited in the admin. */
+export function postText(body) {
+  if (!Array.isArray(body)) return String(body || '');
+  return body.map((b) => (b.type === 'h2' ? `## ${b.text}` : b.type === 'ul' ? (b.items || []).map((i) => `- ${i}`).join('\n') : b.text)).join('\n\n');
+}

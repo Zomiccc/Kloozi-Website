@@ -1,6 +1,7 @@
 // Flazyn marketing — routes. Every path here is also listed in
 // lib/seo.js so it gets prerendered and included in the sitemap.
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import Home from './pages/Home.jsx';
 import { LeadManagement, WhatsAppAutomation, EmailSystem, Automations, Analytics } from './pages/productPages.jsx';
@@ -16,7 +17,14 @@ import Terms from './pages/legal/Terms.jsx';
 import DataDeletion from './pages/legal/DataDeletion.jsx';
 import NotFound from './pages/NotFound.jsx';
 
+// The admin dashboard is its own app, loaded only when /admin is visited.
+const AdminApp = lazy(() => import('./admin/AdminApp.jsx'));
+
 export default function App() {
+  const { pathname } = useLocation();
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    return <Suspense fallback={<div className="admin-boot">Loading admin…</div>}><AdminApp /></Suspense>;
+  }
   return (
     <Layout>
       <Routes>

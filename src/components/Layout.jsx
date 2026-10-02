@@ -10,6 +10,7 @@ import UniverseHost from './UniverseHost.jsx';
 import TiltLayer from './TiltLayer.jsx';
 import { PageTransition, ScrollProgress } from '../lib/motion.jsx';
 import { metaFor, canonical } from '../lib/seo.js';
+import { useContent } from '../lib/content.jsx';
 
 function setMeta(selector, attr, value) {
   const el = document.head.querySelector(selector);
@@ -18,16 +19,17 @@ function setMeta(selector, attr, value) {
 
 export default function Layout({ children }) {
   const loc = useLocation();
+  const { content } = useContent();
 
   useEffect(() => {
-    const m = metaFor(loc.pathname);
+    const m = metaFor(loc.pathname, content);
     document.title = m.title;
     setMeta('meta[name="description"]', 'content', m.description);
     setMeta('link[rel="canonical"]', 'href', canonical(m.path));
     setMeta('meta[property="og:title"]', 'content', m.title);
     setMeta('meta[property="og:description"]', 'content', m.description);
     setMeta('meta[property="og:url"]', 'content', canonical(m.path));
-  }, [loc.pathname]);
+  }, [loc.pathname, content]);
 
   useEffect(() => {
     if (loc.hash) {

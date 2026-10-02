@@ -38,7 +38,8 @@ export default function TiltLayer() {
     };
 
     const onMove = (e) => {
-      if (e.pointerType === 'touch') return;
+      // No tilting while the admin is editing text on the page.
+      if (e.pointerType === 'touch' || document.body.classList.contains('cms-editing')) return;
       last = e;
       if (!frame) frame = requestAnimationFrame(apply);
     };

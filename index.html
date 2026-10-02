@@ -10,7 +10,7 @@
       // timeout guarantees the site is revealed even if the app fails to load.
       try {
         var d = document.documentElement;
-        if (!sessionStorage.getItem('fz-intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches && !(navigator.connection && navigator.connection.saveData)) {
+        if (location.pathname.indexOf('/admin') !== 0 && !sessionStorage.getItem('fz-intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches && !(navigator.connection && navigator.connection.saveData)) {
           d.classList.add('intro');
           setTimeout(function () { d.classList.remove('intro'); }, 10000);
         }

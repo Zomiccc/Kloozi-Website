@@ -61,3 +61,29 @@ scripts/prerender.mjs writes dist/<route>.html with meta, Open Graph, JSON-LD, s
 ### Meta / WhatsApp review
 
 Privacy Policy: `/privacy` · Terms: `/terms` · Data deletion instructions: `/data-deletion` (old `/legal/*` URLs redirect).
+
+## Admin panel (`/admin`)
+
+A built-in CMS for one admin account:
+
+- **Edit on the page:** log in, open any page, click **Edit this page**, then click any text to
+  change it, use **Replace** on any photo (image or video), and **+ Add block** to insert text,
+  image, video, image + text or call-to-action blocks. **SEO** edits the page's Google title/description.
+- **Dashboard:** pages & SEO, blog posts (create/edit/delete, cover images), media library,
+  site settings (contact email, tagline) and publish history with restore.
+- **Save draft → Publish.** Publishing stores the content and triggers a rebuild, so pages stay
+  prerendered static HTML; the live site updates in ~1–2 minutes.
+
+How it works: the site's copy stays in the components as defaults; the admin stores *overrides*
+(`src/lib/content.jsx`, validated by `api/_lib/content.js`). Content and media live in Vercel Blob
+(`api/_lib/storage.js`); the build (`scripts/prerender.mjs`) bakes the published content into every page.
+Admin code is lazy-loaded and never shipped to regular visitors.
+
+Setup (Vercel):
+1. **Storage → Create → Blob**, connect it to this project (adds `BLOB_READ_WRITE_TOKEN`).
+2. `npm run admin:password -- "a-strong-password"` → add `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH`,
+   `ADMIN_SESSION_SECRET` as environment variables.
+3. **Settings → Git → Deploy Hooks** → create one for `main`, add its URL as `VERCEL_DEPLOY_HOOK_URL`.
+4. Redeploy, then sign in at `/admin`.
+
+Locally (`npm run dev`) without a Blob token, content and uploads are stored in `.cms-local/` (gitignored).

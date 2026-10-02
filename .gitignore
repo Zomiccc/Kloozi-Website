@@ -42,3 +42,6 @@ desktop.ini
 .temp/
 coverage/
 *.local
+
+# local CMS storage (dev only)
+.cms-local/
